@@ -61,7 +61,7 @@ public class PersonelDAO {
 
     // Personel bilgilerini güncelleme
     public void updatePersonel(Personal personel) {
-        String sql = "UPDATE personel SET name = ?, address = ?, gender = ?, knowledge = ?, subject = ? WHERE id = ?";
+        String sql = "UPDATE personel SET name = ?, adress = ?, gender = ?, knowlegde = ?, subject = ? WHERE id = ?";
         
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -103,5 +103,25 @@ public class PersonelDAO {
 	        e.printStackTrace();
 	    }
 	    return personelList; // Boş liste döner (null yerine)
+	}
+	// Personel silme
+	public void deleteById(int id) {
+	    String sql = "DELETE FROM personel WHERE id = ?";
+	    
+	    try (Connection connection = DatabaseConnection.getConnection();
+	         PreparedStatement statement = connection.prepareStatement(sql)) {
+	        
+	        statement.setInt(1, id);
+	        int rowsAffected = statement.executeUpdate();
+	        
+	        if (rowsAffected > 0) {
+	            System.out.println("Personel başarıyla silindi (ID: " + id + ").");
+	        } else {
+	            System.out.println("Silinmek istenen personel bulunamadı (ID: " + id + ").");
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Personel silinirken hata: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 }

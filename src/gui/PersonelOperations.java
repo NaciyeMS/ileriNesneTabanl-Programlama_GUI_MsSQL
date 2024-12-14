@@ -27,7 +27,11 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
 import java.awt.ScrollPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PersonelOperations extends JFrame {
 	private JTable table;
@@ -39,7 +43,7 @@ public class PersonelOperations extends JFrame {
 	private JTextField textAdress;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTable table_1;
-
+	private int selectedId;
 	
 
 	/**
@@ -132,7 +136,7 @@ public class PersonelOperations extends JFrame {
                 String gender="",knowledge="";
                 if(rdbtnGenderFemale.isSelected())gender="female";
                 else if(rdbtnGenderMale.isSelected())gender="male";
-                if(chckbxJava.isSelected())knowledge+="-java";
+                if(chckbxJava.isSelected())knowledge+="java";
                 else if(chckbxPython.isSelected())knowledge+="python";
                  String subject =comboBoxSubject.getSelectedItem().toString();
                  
@@ -146,7 +150,7 @@ public class PersonelOperations extends JFrame {
              //   dispose();				
 			}
 		});
-		btnSave.setBounds(140, 224, 134, 21);
+		btnSave.setBounds(167, 224, 134, 21);
 		contentPane.add(btnSave);
 		
 		JButton btnNewButton = new JButton("Reset");
@@ -156,18 +160,71 @@ public class PersonelOperations extends JFrame {
 				textAdress.setText("");
 				buttonGroup.clearSelection();
 				comboBoxSubject.setSelectedIndex(0);
+				chckbxJava.setSelected(false);
+				chckbxPython.setSelected(false);
 			}
 		});
-		btnNewButton.setBounds(46, 224, 85, 21);
+		btnNewButton.setBounds(46, 224, 111, 21);
 		contentPane.add(btnNewButton);
 		
 		table_1 = new JTable();
+		table_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i= table_1.getSelectedRow();
+				TableModel model=table_1.getModel(); 
+				selectedId=Integer.parseInt( model.getValueAt(i, 0).toString());
+				textName.setText(model.getValueAt(i, 1).toString());
+				textAdress.setText(model.getValueAt(i, 2).toString());
+				String gender=model.getValueAt(i, 3).toString();
+				if(gender.equals("male"))rdbtnGenderMale.setSelected(true);
+				else if(gender.equals("female"))rdbtnGenderFemale.setSelected(true);
+				String knownledge=model.getValueAt(i, 4).toString();
+				if(knownledge.equals("Java")) {chckbxJava.setSelected(true);chckbxPython.setSelected(false);}
+				else if(knownledge.equals("Python")) {chckbxPython.setSelected(true);chckbxJava.setSelected(false);}
+				else {chckbxPython.setSelected(true);chckbxJava.setSelected(false);}
+				String subject=model.getValueAt(i, 5).toString();
+				comboBoxSubject.setSelectedItem(subject);
+			}
+		});
 		table_1.setModel(new DefaultTableModel(
 			new Object[][] {},
 			new String[] {"İd", "Name", "Address", "Gender", "Knowledge", "Subject"	}
 		));
-		table_1.setBounds(292, 35, 498, 224);
+		table_1.setBounds(284, 35, 498, 181);
 		contentPane.add(table_1);
+		
+		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PersonelDAO dao=new PersonelDAO();
+				 String name = textName.getText();
+	                String address = textAdress.getText();
+	                String gender="",knowledge="";
+	                if(rdbtnGenderFemale.isSelected())gender="female";
+	                else if(rdbtnGenderMale.isSelected())gender="male";
+	                if(chckbxJava.isSelected())knowledge+="java";
+	                else if(chckbxPython.isSelected())knowledge+="python";
+	                 String subject =comboBoxSubject.getSelectedItem().toString();
+	                 
+	                 Personal personel = new Personal(selectedId, name, address, gender, knowledge, subject);
+				dao.updatePersonel(personel);
+				loadDataToTable();
+			}
+		});
+		btnUpdate.setBounds(311, 224, 130, 21);
+		contentPane.add(btnUpdate);
+		
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PersonelDAO dao=new PersonelDAO();
+				dao.deleteById(selectedId);
+				loadDataToTable();
+			}
+		});
+		btnDelete.setBounds(451, 224, 160, 21);
+		contentPane.add(btnDelete);
 		tableModel=(DefaultTableModel)table_1.getModel();
 		loadDataToTable();
       setVisible(true);        
