@@ -14,17 +14,21 @@ public class PersonelDAO {
 	// Personel ekleme
     public void savePersonel(Personal personel) {
         String sql = "INSERT INTO personel (name, adress, gender, knowlegde, subject) VALUES (?, ?, ?, ?, ?)";
-        
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {            
-            statement.setString(1, personel.getName());
-            statement.setString(2, personel.getAddress());
-            statement.setString(3, personel.getGender());
-            statement.setString(4, personel.getKnowledge());
-            statement.setString(5, personel.getSubject());            
-            statement.executeUpdate();
+        Connection connection = null;
+        try {
+            connection = DatabaseConnection.getConnection();
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, personel.getName());
+                statement.setString(2, personel.getAddress());
+                statement.setString(3, personel.getGender());
+                statement.setString(4, personel.getKnowledge());
+                statement.setString(5, personel.getSubject());
+                statement.executeUpdate();
+            }
         } catch (SQLException e) {
             System.err.println("Personel eklerken hata: " + e.getMessage());
+        } finally {
+            DatabaseConnection.closeConnection();
         }
     }
 
@@ -75,27 +79,29 @@ public class PersonelDAO {
         }
     }
 
-	public List<Personal> selectPersonelDatas() {
+	public ArrayList<Personal> selectPersonelDatas() {
 		String sql = "SELECT * FROM personel";
-        List<Personal> personelList = new ArrayList<>();
-        
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {            
-            while (resultSet.next()) {
-                Personal personel = new Personal(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("adress"),
-                        resultSet.getString("gender"),
-                        resultSet.getString("knowlegde"),
-                        resultSet.getString("subject")
-                );
-                personelList.add(personel);
-            }
-        } catch (SQLException e) {
-            System.err.println("Personel bilgileri alınırken hata: " + e.getMessage());
-        }        
-        return personelList;
+	    ArrayList<Personal> personelList = new ArrayList<>();
+
+	    try (Connection connection = DatabaseConnection.getConnection();
+	         PreparedStatement statement = connection.prepareStatement(sql);
+	         ResultSet resultSet = statement.executeQuery()) {
+
+	        while (resultSet.next()) {
+	            Personal personel = new Personal(
+	                resultSet.getInt("id"),
+	                resultSet.getString("name"),
+	                resultSet.getString("adress"),
+	                resultSet.getString("gender"),
+	                resultSet.getString("knowlegde"),
+	                resultSet.getString("subject")
+	            );
+	            personelList.add(personel);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Personel bilgileri alınırken hata:-- " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    return personelList; // Boş liste döner (null yerine)
 	}
 }

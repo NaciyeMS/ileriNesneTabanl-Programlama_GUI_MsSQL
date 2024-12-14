@@ -22,22 +22,25 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import java.awt.ScrollPane;
 
 public class PersonelOperations extends JFrame {
-	{
-		
-	}
+	private JTable table;
+    private DefaultTableModel tableModel;
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField textName;
 	private JTextField textAdress;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JTable table;
 	private JTable table_1;
+
+	
 
 	/**
 	 * Launch the application.
@@ -104,7 +107,7 @@ public class PersonelOperations extends JFrame {
 		
 		JRadioButton rdbtnGenderFemale = new JRadioButton("Female");
 		buttonGroup.add(rdbtnGenderFemale);
-		rdbtnGenderFemale.setBounds(213, 109, 103, 21);
+		rdbtnGenderFemale.setBounds(213, 109, 59, 21);
 		contentPane.add(rdbtnGenderFemale);
 		
 		JCheckBox chckbxJava = new JCheckBox("Java");
@@ -112,7 +115,7 @@ public class PersonelOperations extends JFrame {
 		contentPane.add(chckbxJava);
 		
 		JCheckBox chckbxPython = new JCheckBox("Python");
-		chckbxPython.setBounds(223, 150, 93, 21);
+		chckbxPython.setBounds(213, 147, 62, 21);
 		contentPane.add(chckbxPython);
 		
 		JComboBox comboBoxSubject = new JComboBox();
@@ -139,7 +142,8 @@ public class PersonelOperations extends JFrame {
                PersonelDAO dao = new PersonelDAO();
                 dao.savePersonel(personel);
                 JOptionPane.showMessageDialog(null, "Personel başarıyla eklendi!");
-                dispose();				
+                loadDataToTable();
+             //   dispose();				
 			}
 		});
 		btnSave.setBounds(140, 224, 134, 21);
@@ -154,25 +158,34 @@ public class PersonelOperations extends JFrame {
 				comboBoxSubject.setSelectedIndex(0);
 			}
 		});
-		btnNewButton.setBounds(45, 224, 85, 21);
+		btnNewButton.setBounds(46, 224, 85, 21);
 		contentPane.add(btnNewButton);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-			},
-			new String[] {
-				"id", "name", "adress", "gender", "knowlegde", "subject"
-			}
+		table_1 = new JTable();
+		table_1.setModel(new DefaultTableModel(
+			new Object[][] {},
+			new String[] {"İd", "Name", "Address", "Gender", "Knowledge", "Subject"	}
 		));
-		//table.setBounds(328, 10, 434, 253);		//contentPane.add(table);
-		// Reusable metoddan tabloyu al ve ekle
-        table = ReusableMetods.createTableWithData();
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(324, 10, 434, 253);
-        contentPane.add(scrollPane);
-        
+		table_1.setBounds(292, 35, 498, 224);
+		contentPane.add(table_1);
+		tableModel=(DefaultTableModel)table_1.getModel();
+		loadDataToTable();
+      setVisible(true);        
 	}
+	private void loadDataToTable() {
+        PersonelDAO personelDAO = new PersonelDAO();
+        ArrayList<Personal> personelList = personelDAO.selectPersonelDatas();
+        tableModel.setRowCount(0);
+        // Tabloya verileri ekle
+        for (Personal personel : personelList) {
+            tableModel.addRow(new Object[]{
+                personel.getId(),
+                personel.getName(),
+                personel.getAddress(),
+                personel.getGender(),
+                personel.getKnowledge(),
+                personel.getSubject()
+            });
+        }
+    }
 }

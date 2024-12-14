@@ -8,28 +8,26 @@ public class DatabaseConnection {
     		"jdbc:sqlserver://localhost:1433;databaseName=guiDb;encrypt=true;trustServerCertificate=true;";
     private static final String DB_USER = "sa";
     private static final String DB_PASSWORD = "sa123456*-";
-
-    // Bağlantı nesnesi
     private static Connection connection = null;
-
     // Bağlantı oluşturma metodu
     public static Connection getConnection() {
-        if (connection == null) {
-            try {
-                // Veritabanına bağlantıyı başlat
-    connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-    System.out.println("MSSQL Veritabanına bağlantı başarılı!");
-            } catch (SQLException e) {
-     System.out.println("MSSQL Veritabanına bağlantı sırasında bir hata oluştu!");
-     e.printStackTrace();
-            }
-        }
-        return connection;
+    	   try {
+    	        // Eğer bağlantı null ya da kapalıysa yeniden oluştur
+    	        if (connection == null || connection.isClosed()) {
+    	            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+    	            System.out.println("MSSQL Veritabanına bağlantı başarılı!");
+    	        }
+    	    } catch (SQLException e) {
+    	        System.out.println("MSSQL Veritabanına bağlantı sırasında bir hata oluştu!");
+    	        e.printStackTrace();
+    	    }
+    	    return connection;
+    	
     }
 
     // Bağlantıyı kapatma metodu
     public static void closeConnection() {
-        if (connection != null) {
+         if (connection != null) {
             try {
                 connection.close();
                 System.out.println("MSSQL Veritabanı bağlantısı kapatıldı.");
@@ -46,3 +44,5 @@ public class DatabaseConnection {
         DatabaseConnection.closeConnection();
     }
 }
+
+

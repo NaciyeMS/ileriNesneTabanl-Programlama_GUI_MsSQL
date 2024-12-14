@@ -23,4 +23,10 @@ public class Personal {
 	    public void setKnowledge(String knowledge) {     this.knowledge = knowledge;	    }
 	    public String getSubject() {	        return subject;	    }
 	    public void setSubject(String subject) {	        this.subject = subject;	    }
+		@Override
+		public String toString() {
+			return "Personal [id=" + id + ", name=" + name + ", address=" + address + ", gender=" + gender
+					+ ", knowledge=" + knowledge + ", subject=" + subject + "]";
+		}
+	    
 }

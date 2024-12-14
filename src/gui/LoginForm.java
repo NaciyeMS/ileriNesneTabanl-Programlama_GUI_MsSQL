@@ -74,7 +74,6 @@ public class LoginForm extends JFrame {
 		btnSignIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				   UsersDAO usersDAO = new UsersDAO();
-
 			        // Kullanıcıdan giriş bilgilerini al
 			        String username = textUsername.getText();
 			        String password =textPassword.getText();
@@ -83,8 +82,10 @@ public class LoginForm extends JFrame {
 			        if (user != null) {
 			        	JOptionPane.showMessageDialog(null, "Giriş başarılı! Hoş geldiniz, " + user.getUsername(), 
                                 "Başarılı Giriş", JOptionPane.INFORMATION_MESSAGE);
-			        	PersonelOperations form=new PersonelOperations();
-			        	form.show();
+			        	PersonelOperations form = new PersonelOperations();
+			        	  dispose();
+			        	form.setVisible(true);		  
+			        	
 			        	
 			        	} else {
 			        		 JOptionPane.showMessageDialog(null, "Giriş başarısız! Kullanıcı adı veya şifre yanlış.", 

@@ -38,7 +38,7 @@ public class UsersDAO {
 	                    User user = new User();
 	                    user.setId(resultSet.getInt("sno"));
 	                    user.setUsername(resultSet.getString("username"));
-	                    user.setPassword(resultSet.getString("password"));
+	                    user.setPassword(resultSet.getString("password"));	                  
 	                    return user;
 	                }
 	            }
